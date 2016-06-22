@@ -1,0 +1,39 @@
+# depslib dependency file v1.0
+1465867102 source:c:\users\wedeueis\documents\ufabc\cg\openglproject2\main.cpp
+	<GLFW/glfw3.h>
+	<GL/glew.h>
+	<iostream>
+	<string>
+	<sstream>
+	<fstream>
+
+1464879677 c:\users\wedeueis\documents\ufabc\cg\openglproject2\include\glfw\glfw3.h
+	<stddef.h>
+	<stdint.h>
+	<OpenGL/gl3.h>
+	<OpenGL/gl3ext.h>
+	<OpenGL/gl.h>
+	<OpenGL/glu.h>
+	<GL/glcorearb.h>
+	<GLES/gl.h>
+	<GLES/glext.h>
+	<GLES2/gl2.h>
+	<GLES2/gl2ext.h>
+	<GLES3/gl3.h>
+	<GLES2/gl2ext.h>
+	<GLES3/gl31.h>
+	<GLES2/gl2ext.h>
+	<vulkan/vulkan.h>
+	<GL/gl.h>
+	<GL/glext.h>
+	<GL/glu.h>
+
+1439207690 c:\users\wedeueis\documents\ufabc\cg\openglproject2\include\gl\glew.h
+	<stddef.h>
+	<inttypes.h>
+	<stdint.h>
+	<inttypes.h>
+	<Availability.h>
+	<OpenGL/glu.h>
+	<GL/glu.h>
+
