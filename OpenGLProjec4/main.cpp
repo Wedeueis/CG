@@ -9,6 +9,7 @@
 #include <fstream>
 #include <thread>
 #include <chrono>
+#include "mat33.cpp"
 
 using namespace std;
 
@@ -29,10 +30,14 @@ void timer() {
     }
 }
 
-
 struct vertex {
     float x, y, r, g, b;
 };
+
+void on_resize(GLFWwindow* window, int width, int height) {
+    if (height<width) glViewport( (width-height)/2 , 0, height, height);
+    else glViewport(0, (height-width)/2, width, width);
+}
 
 int main(void) {
     thread t1(timer); // cria e põe pra rodar a thread
@@ -42,6 +47,7 @@ int main(void) {
     if (!glfwInit())
         return -1;
 
+
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(640, 640, "Hello World", NULL, NULL);
     if (!window) {
@@ -49,6 +55,7 @@ int main(void) {
         return -1;
     }
 
+    glfwSetFramebufferSizeCallback(window, on_resize);
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
 
@@ -57,27 +64,31 @@ int main(void) {
         return 0;
     }
 
+    mat33 m1;
+    m1.print();
+
+
     vertex v[] = {
-        { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f} ,
+        { 0.0f, 0.0f, 0.0f, 0.5f, 0.5f} ,
         // Top
-        {-0.2f, 0.8f, 1.0f, 0.0f, 0.0f} ,
-        { 0.2f, 0.8f, 1.0f, 0.0f, 0.0f} ,
-        { 0.0f, 0.8f, 1.0f, 0.0f, 0.0f} ,
+        {-0.2f, 0.8f, 0.0f, 1.0f, 0.0f} ,
+        { 0.2f, 0.8f, 0.0f, 0.0f, 1.0f} ,
+        { 0.0f, 0.8f, 0.0f, 1.0f, 1.0f} ,
         { 0.0f, 1.0f, 1.0f, 0.0f, 0.0f} ,
         // Bottom
-        {-0.2f,-0.8f, 1.0f, 0.0f, 0.0f} ,
-        { 0.2f,-0.8f, 1.0f, 0.0f, 0.0f} ,
-        { 0.0f,-0.8f, 1.0f, 0.0f, 0.0f} ,
+        {-0.2f,-0.8f, 0.0f, 0.0f, 1.0f} ,
+        { 0.2f,-0.8f, 0.0f, 1.0f, 0.0f} ,
+        { 0.0f,-0.8f, 0.0f, 1.0f, 1.0f} ,
         { 0.0f,-1.0f, 1.0f, 0.0f, 0.0f} ,
         // Left
-        {-0.8f,-0.2f, 1.0f, 0.0f, 0.0f} ,
-        {-0.8f, 0.2f, 1.0f, 0.0f, 0.0f} ,
-        {-0.8f, 0.0f, 1.0f, 0.0f, 0.0f} ,
+        {-0.8f,-0.2f, 0.0f, 1.0f, 0.0f} ,
+        {-0.8f, 0.2f, 0.0f, 0.0f, 1.0f} ,
+        {-0.8f, 0.0f, 0.0f, 1.0f, 1.0f} ,
         {-1.0f, 0.0f, 1.0f, 0.0f, 0.0f} ,
         // Right
-        { 0.8f,-0.2f, 1.0f, 0.0f, 0.0f} ,
-        { 0.8f, 0.2f, 1.0f, 0.0f, 0.0f} ,
-        { 0.8f, 0.0f, 1.0f, 0.0f, 0.0f} ,
+        { 0.8f,-0.2f, 0.0f, 0.0f, 1.0f} ,
+        { 0.8f, 0.2f, 0.0f, 1.0f, 0.0f} ,
+        { 0.8f, 0.0f, 0.0f, 1.0f, 1.0f} ,
         { 1.0f, 0.0f, 1.0f, 0.0f, 0.0f}
     };
 
@@ -139,11 +150,31 @@ int main(void) {
 
     glLinkProgram(shaderProgram);
     glUseProgram(shaderProgram);
-
+    GLuint id_mt = glGetUniformLocation(shaderProgram, "mt");
+    float rate = 0.02, control = 1.0;
+    int graus = 3;
+    bool crescendo = false;
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window)) {
         glClearColor(0.0, 0.0, 0.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        glUniformMatrix3fv(id_mt, 1, GL_TRUE, m1.mptr);
+
+
+        if(crescendo){
+            m1.scale(1.0 + rate, 1.0 + rate);
+            control *=( 1.0 + rate);
+            m1.rotate(graus);
+            if(control > 1.0)
+                crescendo = false;
+        }else{
+            m1.scale(1.0 - rate, 1.0 - rate);
+            control *= ( 1.0 - rate);
+            m1.rotate(-graus);
+            if(control < 0.05)
+                crescendo = true;
+        }
         /* Código de renderização OpenGL vai aqui */
         glDrawElements(GL_TRIANGLES, 48, GL_UNSIGNED_SHORT, (GLvoid*)0);
         /* Troca o buffer de fundo com o buffer de exibição */

@@ -1,8 +1,9 @@
-#version 330 core
+#version 330
 layout(location=0) in vec2 in_Position;
 layout(location=1) in vec3 in_Color;
+uniform mat3 mt;
 out vec3 ex_Color;
 void main(void) {
-	gl_Position = vec4(in_Position, 0, 1);
+	gl_Position = vec4(mt * vec3(in_Position, 1.0), 1.0);
 	ex_Color = in_Color;
 }
